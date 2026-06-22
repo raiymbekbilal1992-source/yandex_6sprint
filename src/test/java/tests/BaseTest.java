@@ -1,24 +1,45 @@
 package tests;
 
+import io.qameta.allure.Attachment;
+import io.qameta.allure.Step;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 public class BaseTest {
 
     protected WebDriver driver;
+    protected static final String BASE_URL = "https://qa-scooter.education-services.ru/";
 
     @BeforeEach
-    public void setUp() {
+    @Step("Запустить браузер и открыть сайт")
+    public void setUp(TestInfo testInfo) {
         WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
-        driver.get("https://qa-scooter.education-services.ru/");
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--no-sandbox");
+        options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
+        driver = new ChromeDriver(options);
+        driver.manage().window().maximize();
+        driver.get(BASE_URL);
     }
 
     @AfterEach
-    public void tearDown() {
-        driver.quit();
+    @Step("Закрыть браузер")
+    public void tearDown(TestInfo testInfo) {
+        if (driver != null) {
+            takeScreenshot();
+            driver.quit();
+        }
+    }
+
+    @Attachment(value = "Скриншот", type = "image/png")
+    public byte[] takeScreenshot() {
+        return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
     }
 }
