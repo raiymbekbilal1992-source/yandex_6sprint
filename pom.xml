@@ -50,6 +50,12 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-firefox-driver</artifactId>
+      <version>4.21.0</version>
+    </dependency>
+
   </dependencies>
 
   <build>
