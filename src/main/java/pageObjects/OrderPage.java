@@ -110,16 +110,23 @@ public class OrderPage {
 
         // Ждём появления модалки после клика
         wait.until(ExpectedConditions.presenceOfElementLocated(
-                By.cssSelector("div.Order_Modal_YZ-d3")
+                By.cssSelector("div.Order_Modal__YZ-d3")
         ));
     }
 
     public void confirmOrder() {
-        By confirmBtn = By.cssSelector("div.Order_Modal_YZ-d3 button:last-child");
-        WebElement btn = driver.findElement(confirmBtn);
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", btn);
-        try { Thread.sleep(300); } catch (InterruptedException e) {}
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", btn);
+        By buttons = By.cssSelector("button.Button_Button__ra12g.Button_Middle__1CSJM");
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
+        List<WebElement> btns = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(buttons));
+
+        for (WebElement btn : btns) {
+            if (btn.getText().trim().equals("Да")) {
+                btn.click();
+                return;
+            }
+        }
+
+        throw new RuntimeException("Кнопка 'Да' не найдена");
     }
 
     public boolean isOrderSuccessVisible() {
